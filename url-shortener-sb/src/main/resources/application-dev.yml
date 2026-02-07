@@ -1,0 +1,25 @@
+spring:
+  datasources:
+    url: jdbc:postgresql://localhost:5433/URL_Shortener
+    username: postgres
+    password: 6521
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+
+frontend:
+  url: http://localhost:5173
+
+jwt:
+  secret: VYqxdFGY2cnbGFRO5aKjJ2CqoOMuJBIVC9Hf7O7Il/E=
+
+

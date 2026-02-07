@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: url-shortener
+
+  jpa:
+    open-in-view: false
+
+server:
+  port: ${PORT:8081}
+
+
+jwt:
+  expiration: ${JWT_EXPIRATION:172800000}
