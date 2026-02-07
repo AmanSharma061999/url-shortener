@@ -1,0 +1,10 @@
+# Normalize text files
+* text=auto
+
+# Keep Windows scripts in CRLF
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Unix scripts
+*.sh text eol=lf
+
