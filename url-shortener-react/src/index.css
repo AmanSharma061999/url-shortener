@@ -1,0 +1,101 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.space-bg {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate; /* important for layering */
+  background: radial-gradient(
+    1200px 800px at 20% 10%,
+    #111827 0%,
+    #060814 45%,
+    #03040a 100%
+  );
+  overflow: hidden;
+}
+
+.space-bg::before,
+.space-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-repeat: repeat;
+  opacity: 0.55;
+  z-index: 0;
+}
+
+/* tiny stars */
+.space-bg::before {
+  background-image: radial-gradient(
+      1px 1px at 12px 18px,
+      rgba(255, 255, 255, 0.85) 50%,
+      transparent 60%
+    ),
+    radial-gradient(
+      1px 1px at 80px 40px,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 60%
+    ),
+    radial-gradient(
+      1px 1px at 140px 90px,
+      rgba(255, 255, 255, 0.7) 50%,
+      transparent 60%
+    );
+  background-size: 180px 140px;
+  animation: starsMove 60s linear infinite;
+}
+
+/* slightly larger faint stars */
+.space-bg::after {
+  opacity: 0.35;
+  background-image: radial-gradient(
+      1.5px 1.5px at 30px 60px,
+      rgba(255, 255, 255, 0.7) 50%,
+      transparent 60%
+    ),
+    radial-gradient(
+      1.5px 1.5px at 110px 20px,
+      rgba(255, 255, 255, 0.5) 50%,
+      transparent 60%
+    );
+  background-size: 220px 180px;
+  animation: starsMove 90s linear infinite;
+}
+
+@keyframes starsMove {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-240px);
+  }
+}
+
+
+.hero-img {
+  mix-blend-mode: screen;
+  opacity: 0.9;
+
+  filter:
+    saturate(0.92)
+    contrast(1.05)
+    brightness(1.03)
+    drop-shadow(0 26px 50px rgba(0, 0, 0, 0.65));
+
+  mask-image: radial-gradient(circle at center, #000 55%, transparent 95%);
+  -webkit-mask-image: radial-gradient(circle at center, #000 55%, transparent 95%);
+}
+
+.hero-art {
+  animation: heroFloat 6.5s ease-in-out infinite;
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}

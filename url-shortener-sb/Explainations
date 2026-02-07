@@ -1,0 +1,33 @@
+You transitioned your authentication system from a frontend-stored JWT (localStorage) model to a secure HttpOnly cookie-based authentication system combined with React Context API.
+This change was made primarily to eliminate XSS attack vectors, because tokens stored in localStorage are readable by JavaScript, whereas HttpOnly cookies are completely inaccessible to JS.
+Instead of the frontend “holding” the token, the browser now automatically attaches it to every request, and the backend becomes the single source of truth for authentication.
+
+When a user submits the login form, the frontend sends credentials to /api/auth/public/login.
+The backend authenticates the user using Spring Security’s AuthenticationManager, generates a JWT via JwtUtils, and stores that token inside an HttpOnly cookie (access_token) using Set-Cookie.
+The response body contains no token—only a success flag—so the frontend never touches or stores the JWT directly.
+From this point on, the browser silently includes the cookie with every request.
+
+
+On application startup or page refresh, the AuthProvider (Context API) runs fetchMe() inside useEffect.
+This function calls /api/auth/me, and because withCredentials is enabled, the browser automatically sends the cookie.
+The JwtAuthenticationFilter intercepts the request, extracts the JWT from the cookie, validates it, loads the user via UserDetailsService, and populates the Spring Security context.
+If the token is valid, /me returns user details; if not, it returns 401. The AuthContext then sets user or null, allowing the entire React app to know whether the user is authenticated.
+
+Instead of checking localStorage in every component, authentication state now lives in React Context, which is cleaner, reactive, and centralized.
+Components like Navbar, Dashboard, or route guards simply read user and authLoading from useAuth().
+This avoids prop drilling, prevents stale auth state, and guarantees UI consistency across refreshes and route changes.
+
+When the user logs out, the frontend calls /api/auth/logout. The backend responds by overwriting the cookie with an empty value and Max-Age=0, effectively deleting it.
+The frontend then clears user from context and redirects the user.
+Because the cookie is gone, subsequent requests automatically fail authentication—no manual cleanup is required on the frontend.
+
+In short, system now follows industry-grade authentication architecture:
+    * Backend owns the token
+    * Browser manages transport
+    * Frontend manages identity state
+    * No sensitive data in JS storage
+    * Automatic auth on refresh
+    * Single source of truth
+
+This is the same architectural pattern used by GitHub, Stripe, Google, and most enterprise apps, and it scales cleanly when you add protected routes, refresh tokens, or role-based authorization later.
+
