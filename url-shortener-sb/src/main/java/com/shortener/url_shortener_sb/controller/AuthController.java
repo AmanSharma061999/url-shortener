@@ -101,3 +101,13 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("ok",true));
     }
 }
+
+
+
+
+/*
+
+Spring Boot determines which configuration file to load based on the active profile
+and naming convention (application-{profile}.yml), automatically merging it with the base configuration
+without any code-level references.
+ */

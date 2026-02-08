@@ -31,3 +31,16 @@ In short, system now follows industry-grade authentication architecture:
 
 This is the same architectural pattern used by GitHub, Stripe, Google, and most enterprise apps, and it scales cleanly when you add protected routes, refresh tokens, or role-based authorization later.
 
+[traceId=%X{traceId:-}]   Distributed tracing hook
+%X{traceId} → reads from MDC (Mapped Diagnostic Context)
+:- → default value if traceId is missing
+
+Example outputs:
+
+[traceId=3f2a9c8d12ab]
+[traceId=-]
+
+
+Why this matters:
+
+In microservices, one request → many services Same traceId follows the request everywhere

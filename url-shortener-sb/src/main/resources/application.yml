@@ -11,3 +11,14 @@ server:
 
 jwt:
   expiration: ${JWT_EXPIRATION:172800000}
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [traceId=%X{traceId:-}] %logger{36} - %msg%n"

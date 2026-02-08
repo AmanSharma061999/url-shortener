@@ -1,5 +1,5 @@
 spring:
-  datasources:
+  datasource:
     url: jdbc:postgresql://localhost:5433/URL_Shortener
     username: postgres
     password: 6521
@@ -21,5 +21,11 @@ frontend:
 
 jwt:
   secret: VYqxdFGY2cnbGFRO5aKjJ2CqoOMuJBIVC9Hf7O7Il/E=
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
 
 

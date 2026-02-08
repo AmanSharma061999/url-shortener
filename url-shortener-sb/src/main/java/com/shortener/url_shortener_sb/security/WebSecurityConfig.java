@@ -1,6 +1,7 @@
 package com.shortener.url_shortener_sb.security;
 
 
+import com.shortener.url_shortener_sb.errors.SecurityErrorHandlers;
 import com.shortener.url_shortener_sb.security.jwt.JwtAuthenticationFilter;
 import com.shortener.url_shortener_sb.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
+
 
 @Configuration
 @EnableWebSecurity
@@ -25,11 +29,13 @@ public class WebSecurityConfig {
 
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final SecurityErrorHandlers securityErrorHandlers;
 
     public WebSecurityConfig(UserDetailsServiceImpl userDetailsService,
-                             JwtAuthenticationFilter jwtAuthenticationFilter) {
+                             JwtAuthenticationFilter jwtAuthenticationFilter, SecurityErrorHandlers securityErrorHandlers) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.securityErrorHandlers = securityErrorHandlers;
     }
 
     @Bean
@@ -48,17 +54,25 @@ public class WebSecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> {})
                 .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(securityErrorHandlers)
+                        .accessDeniedHandler(securityErrorHandlers)
+                )
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/urls/**").authenticated()
-                                .requestMatchers("/{shortUrl}").permitAll()
-                                .anyRequest().authenticated());
+                        .requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/{shortUrl}").permitAll()
+                        .requestMatchers("/api/urls/**").authenticated()
+                        .anyRequest().authenticated());
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
