@@ -22,7 +22,7 @@ const ShortenItem = ({
 
   const subdomainBase =
     import.meta.env.VITE_REACT_SUBDOMAIN?.replace(/\/$/, "") || "";
-  const shortLink = `${subdomainBase}/${shortUrl}`;
+  const shortLink = `${subdomainBase}/s/${shortUrl}`;
 
   const handleCopy = async () => {
     try {
