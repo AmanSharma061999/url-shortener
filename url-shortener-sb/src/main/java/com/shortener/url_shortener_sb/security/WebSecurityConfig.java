@@ -3,7 +3,6 @@ package com.shortener.url_shortener_sb.security;
 
 import com.shortener.url_shortener_sb.errors.SecurityErrorHandlers;
 import com.shortener.url_shortener_sb.security.jwt.JwtAuthenticationFilter;
-import com.shortener.url_shortener_sb.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -69,12 +68,15 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/{shortUrl}").permitAll()
-                        .requestMatchers("/api/urls/**").authenticated()
-                        .anyRequest().authenticated());
+                        .requestMatchers("/api/auth/public/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/s/**").permitAll()
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().authenticated()
+                );
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
+
+

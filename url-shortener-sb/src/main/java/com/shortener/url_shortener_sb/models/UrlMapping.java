@@ -11,7 +11,13 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "url_mapping")
+@Table(name = "url_mapping",
+indexes = {
+        @Index(name = "idx_url_mapping_short_url", columnList="short_url"),
+        @Index(name = "idx_url_mapping_user_id", columnList="user_id"),
+        @Index(name = "idx_url_mapping_createdDate", columnList = "created_Date")
+    }
+)
 public class UrlMapping {
 
     @Id
@@ -46,11 +52,21 @@ public class UrlMapping {
     @EqualsAndHashCode.Exclude
     private List<ClickEvent> clickEvents = new ArrayList<>();
 
+
 }
 
 
 
 
 
-//Cascade Style means propagating operations from parent to child
-// Orphan removal stands to delete child when it losses its parent.
+/*
+    * Cascade Style means propagating operations from parent to child
+    * Orphan removal stands to delete child when it losses its parent.
+
+    * Hey JPA, just before you save this object for the first time, run this method. -@PrePersist
+    * You use @PrePersist to initialize or modify fields just before INSERT happens,
+       without doing it manually in your service code.
+
+
+
+ */

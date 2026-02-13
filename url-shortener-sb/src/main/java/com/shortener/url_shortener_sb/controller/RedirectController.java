@@ -16,16 +16,16 @@ public class RedirectController {
         this.urlMappingService=urlMappingService;
     }
 
-    @GetMapping("/{shortUrl}")
+    @GetMapping("/s/{shortUrl}")
     public ResponseEntity<Void> redirect(@PathVariable String shortUrl) {
         UrlMapping urlMapping = urlMappingService.getOriginalUrl(shortUrl);
 
-        if(urlMapping != null) {
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add("Location", urlMapping.getOriginalUrl());
-            return ResponseEntity.status(302).headers(httpHeaders).build();
-        } else {
+        if (urlMapping == null) {
             return ResponseEntity.notFound().build();
         }
+
+        return ResponseEntity.status(302)
+                .header(HttpHeaders.LOCATION, urlMapping.getOriginalUrl())
+                .build();
     }
 }

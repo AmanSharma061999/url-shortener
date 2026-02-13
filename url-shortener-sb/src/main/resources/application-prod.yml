@@ -18,10 +18,15 @@ frontend:
   url: ${FRONTEND_URL}
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret: ${JWT_SECRET:VYqxdFGY2cnbGFRO5aKjJ2CqoOMuJBIVC9Hf7O7Il/E=}
+  expiration: ${JWT_EXPIRATION:172800000}
 
 management:
   endpoints:
     web:
       exposure:
         include: health
+
+app:
+  cookie:
+    secure: true

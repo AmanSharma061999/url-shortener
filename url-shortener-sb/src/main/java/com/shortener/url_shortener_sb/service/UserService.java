@@ -2,8 +2,10 @@ package com.shortener.url_shortener_sb.service;
 
 
 import com.shortener.url_shortener_sb.dtos.LoginRequest;
+import com.shortener.url_shortener_sb.dtos.RegisterRequest;
 import com.shortener.url_shortener_sb.models.User;
 import com.shortener.url_shortener_sb.repository.UserRepository;
+import com.shortener.url_shortener_sb.security.UserDetailsImpl;
 import com.shortener.url_shortener_sb.security.jwt.JwtAuthenticationResponse;
 import com.shortener.url_shortener_sb.security.jwt.JwtUtils;
 import lombok.AllArgsConstructor;
@@ -24,8 +26,22 @@ public class UserService {
     private AuthenticationManager authenticationManager;
     private JwtUtils jwtutils;
 
-    public User registerUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public User registerUser(RegisterRequest registerRequest) {
+        String username = registerRequest.getUsername().trim();
+        String email = registerRequest.getEmail().toLowerCase();
+
+        if(userRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if(userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setRole("ROLE_USER");
         return userRepository.save(user);
     }
 

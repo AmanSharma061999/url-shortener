@@ -24,4 +24,6 @@ public interface UrlMappingRepository extends JpaRepository<UrlMapping, Long> {
   order by um.createdDate desc
 """)
     List<UrlMapping> findAllByUserIdWithUser(@Param("userId") Long userId);
+
+    boolean existsByShortUrl(String shortUrl);
 }

@@ -1,4 +1,4 @@
-package com.shortener.url_shortener_sb.service;
+package com.shortener.url_shortener_sb.security;
 
 import com.shortener.url_shortener_sb.models.User;
 import lombok.Data;

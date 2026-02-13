@@ -19,13 +19,31 @@ public class WebConfig implements WebMvcConfigurer {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(frontendUrl)
-                        .allowedMethods("GET", "POST", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST","PUT","PATCH","DELETE","OPTIONS")
                         .allowedHeaders("*")
-                        .exposedHeaders("Set-Cookie")
+                        .exposedHeaders("X-Trace-Id")
                         .allowCredentials(true)
                         .maxAge(3600);
             }
         };
     }
-
 }
+
+
+/*
+What WebConfig handles
+WebConfig is about CORS (Cross-Origin Resource Sharing).
+
+It answers the browser’s questions:
+    * “Am I allowed to call this backend from this frontend?”
+    * “Am I allowed to send cookies?”
+    * “Can I read certain response headers?”
+
+Things ONLY WebConfig does
+    * Allowed frontend origins (http://localhost:5173)
+    * Allowed HTTP methods
+    * Allowed headers
+    * Whether cookies are allowed (allowCredentials)
+    * Which response headers frontend can read
+
+ */
