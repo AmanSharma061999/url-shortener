@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: urlshortener-db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+    ports:
+      - "5433:5432"
+
+
+  backend:
+    build: ./url-shortener-sb
+    container_name: linklytics-backend
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      # Backend is inside docker, so it must talk to postgres service name on 5432
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      PORT: "8081"
+volumes:
+  pgdata:

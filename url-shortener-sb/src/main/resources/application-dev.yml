@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/URL_Shortener
-    username: postgres
-    password: 6521
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/URL_Shortener}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -22,10 +22,11 @@ logging:
 
 
 frontend:
-  url: http://localhost:5173
+  url: ${FRONTEND_URL:http://localhost:5173}
 
 jwt:
-  secret: VYqxdFGY2cnbGFRO5aKjJ2CqoOMuJBIVC9Hf7O7Il/E=
+  secret: ${JWT_SECRET:dev-only-change}
+  expiration: ${JWT_EXPIRATION:172800000}
 
 management:
   endpoints:
@@ -35,6 +36,6 @@ management:
 
 app:
   cookie:
-    secure: false
+    secure: ${APP_COOKIE_SECURE:false}
 
 

@@ -18,8 +18,8 @@ frontend:
   url: ${FRONTEND_URL}
 
 jwt:
-  secret: ${JWT_SECRET:VYqxdFGY2cnbGFRO5aKjJ2CqoOMuJBIVC9Hf7O7Il/E=}
-  expiration: ${JWT_EXPIRATION:172800000}
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
 
 management:
   endpoints:
@@ -29,4 +29,7 @@ management:
 
 app:
   cookie:
-    secure: true
+    secure: ${APP_COOKIE_SECURE:true}
+
+server:
+  forward-headers-strategy: framework
