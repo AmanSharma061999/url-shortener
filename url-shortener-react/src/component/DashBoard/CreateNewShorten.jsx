@@ -28,9 +28,7 @@ const CreateNewShorten = ({ setOpen, refetch }) => {
         originalUrl: data.originalUrl?.trim(),
         customAlias: data.customAlias?.trim() || null,
       };
-      await api.post("/api/urls/shorten", payload, {
-        withCredentials: true,
-      });
+      await api.post("/api/urls/shorten", payload);
       reset();
       if (typeof refetch === "function") await refetch();
       setOpen(false);
