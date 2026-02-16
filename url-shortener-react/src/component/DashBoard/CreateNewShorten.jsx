@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
-import TextField from "../TextField"; // adjust path
+import TextField from "../TextField"; 
+import api from "../../api/api"; 
 
 const CreateNewShorten = ({ setOpen, refetch }) => {
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,7 @@ const CreateNewShorten = ({ setOpen, refetch }) => {
         originalUrl: data.originalUrl?.trim(),
         customAlias: data.customAlias?.trim() || null,
       };
-      await axios.post("http://localhost:8081/api/urls/shorten", payload, {
+      await api.post("/api/urls/shorten", payload, {
         withCredentials: true,
       });
       reset();

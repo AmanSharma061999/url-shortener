@@ -27,13 +27,23 @@ public class JwtUtils {
     @Value("${jwt.expiration}")
     private int jwtExpirationMs;
 
+    public String getJwtFromCookie(HttpServletRequest request) {
+        if(request.getCookies() ==  null) return null;
+
+        return Arrays.stream(request.getCookies())
+                .filter(c -> "access_token".equals(c.getName()))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse(null);
+    }
+
 
     public String getJwtFromHeader(HttpServletRequest request) {
         // 1) Try cookie first (HttpOnly cookie approach)
 
         if(request.getCookies() != null) {
             for(Cookie cookie: request.getCookies()) {
-                if("accessToken".equals(cookie.getName())) {
+                if("access_token".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
@@ -43,16 +53,6 @@ public class JwtUtils {
             return bearerToken.substring(7);
         }
         return null;
-    }
-
-    public String getJwtFromCookie(HttpServletRequest request) {
-        if(request.getCookies() ==  null) return null;
-
-        return Arrays.stream(request.getCookies())
-                .filter(c -> "access_token".equals(c.getName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElse(null);
     }
 
     public String generateToken(UserDetailsImpl userDetails) {
@@ -66,7 +66,7 @@ public class JwtUtils {
                 .subject(username)
                 .claim("roles",roles)
                 .issuedAt(new Date())
-                .expiration(new Date((new Date().getTime() + 172800000)))
+                .expiration(new Date((new Date().getTime() + jwtExpirationMs)))
                 .signWith(key())
                 .compact();
 

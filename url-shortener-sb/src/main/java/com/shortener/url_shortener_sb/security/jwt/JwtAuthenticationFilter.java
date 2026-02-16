@@ -33,6 +33,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 jwt = jwtTokenProvider.getJwtFromHeader(request);
             }
 
+            if (jwt == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             if(jwt!=null && jwtTokenProvider.validateToken(jwt)) {                              //Validate Token
                 String username = jwtTokenProvider.getUserNameFromJwtToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);     //coming from spring security, Once authentication is done it get userdetail

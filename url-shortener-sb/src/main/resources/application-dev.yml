@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5433/URL_Shortener}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASSWORD:postgres}
-    driver-class-name: org.postgresql.Driver
+      url: ${DB_URL :jdbc:postgresql://localhost:5433/URL_Shortener}
+      username: ${DB_USER:postgres}
+      password: ${DB_PASSWORD:6521}
+      driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -19,13 +19,16 @@ logging:
   level:
     org.flywaydb: INFO
     org.springframework.security: INFO
+    org.springframework.web: DEBUG
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
+    com.shortener.url_shortener_sb: DEBUG
 
 
 frontend:
   url: ${FRONTEND_URL:http://localhost:5173}
 
 jwt:
-  secret: ${JWT_SECRET:dev-only-change}
+  secret: VYqxdFGY2cnbGFRO5aKjJ2CqoOMuJBIVC9Hf7O7Il/E=
   expiration: ${JWT_EXPIRATION:172800000}
 
 management:
@@ -37,5 +40,12 @@ management:
 app:
   cookie:
     secure: ${APP_COOKIE_SECURE:false}
+
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on_param
 
 

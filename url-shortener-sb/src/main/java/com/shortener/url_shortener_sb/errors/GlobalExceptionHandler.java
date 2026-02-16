@@ -6,6 +6,7 @@ import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -28,6 +29,18 @@ public class GlobalExceptionHandler {
                 status.value(),
                 message,
                 traceId());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiError> handleBadCredentials(BadCredentialsException ex, HttpServletRequest req) {
+        ApiError err = new ApiError(
+                /* timestamp */ java.time.Instant.now(),
+                /* path */ req.getRequestURI(),
+                /* status */ 401,
+                /* message */ "Invalid username or password",
+                /* traceId */ req.getHeader("X-Trace-Id") // or however you set traceId
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
     }
 
     //Validation errors from @Valid
