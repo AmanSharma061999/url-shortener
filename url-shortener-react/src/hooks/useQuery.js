@@ -14,7 +14,7 @@ console.log(start, end);
     queryKey: ['totalClicks', start, end],
     // enabled: !!startDate && !!endDate,
     queryFn: async () => {
-      const response = api.get('/api/urls/totalClicks?', {
+      const response = api.get('/urls/totalClicks?', {
         params: {
           startDate: start,
           endDate: end 

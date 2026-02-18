@@ -20,10 +20,8 @@ const ShortenItem = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  const redirectBase = (import.meta.env.VITE_REDIRECT_BASE_URL || "").replace(/\/$/, "");
-const shortLink = `${redirectBase}/s/${shortUrl}`; 
-
-
+  const shortLink = `${window.location.origin}/s/${shortUrl}`;
+ 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(shortLink);

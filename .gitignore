@@ -1,7 +1,15 @@
-# Environment variables
+# Environment variables (secrets)
 .env
-.env.*
-!.env.example
+.env.prod
+.env.*          # ignore any .env.dev, .env.local, etc.
+!.env.example   # allow template
+
+# Allow prod template (no secrets)
+!.env.prod.example
+
+# React env files (keep them out of git)
+url-shortener-react/.env*
+!url-shortener-react/.env.example
 
 # Maven
 target/
@@ -15,3 +23,5 @@ target/
 # OS
 .DS_Store
 
+
+cookies.txt

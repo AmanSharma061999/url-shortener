@@ -26,7 +26,7 @@ const RegisterPage = () => {
   const registerHandler = async (payload) => {
     setLoader(true);
     try {
-      const resp = await api.post("/api/auth/public/register", payload);
+      const resp = await api.post("/auth/public/register", payload);
       console.log(resp.data);
       reset();
       navigate("/login");
