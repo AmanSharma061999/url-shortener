@@ -52,6 +52,10 @@ services:
     build:
       context: ./url-shortener-react
       dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+        VITE_REDIRECT_BASE_URL: ${VITE_REDIRECT_BASE_URL}
+
     container_name: linklytics-frontend
     ports:
       - "80:80"
