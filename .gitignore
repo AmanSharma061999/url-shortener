@@ -1,8 +1,9 @@
 # Environment variables (secrets)
 .env
 .env.prod
+.env.dev
 .env.*          # ignore any .env.dev, .env.local, etc.
-!.env.example   # allow template
+
 
 # Allow prod template (no secrets)
 !.env.prod.example
