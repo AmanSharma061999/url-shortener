@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 
+import java.time.Duration;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -56,10 +58,11 @@ public class AuthController {
 
         ResponseCookie cookie = ResponseCookie.from("access_token", jwt)
                 .httpOnly(true)
-                .secure(cookieSecure)
-                .sameSite("Lax")
+                .secure(true)                    // prod true
+                .sameSite("None")                // required
+                .domain(".linxlytics.com")       // required for subdomains
                 .path("/")
-                .maxAge(60 * 60 *2 )
+                .maxAge(Duration.ofDays(2))
                 .build();
 
         return ResponseEntity.ok()
