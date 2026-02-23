@@ -22,6 +22,8 @@ services:
     build: ./url-shortener-sb
     container_name: linklytics-backend
     env_file: [ .env ]
+    ports:
+      - "8081:8081"
     depends_on:
       postgres:
         condition: service_healthy
