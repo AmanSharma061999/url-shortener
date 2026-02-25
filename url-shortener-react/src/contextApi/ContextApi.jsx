@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import api from "../api/api";
+import { api } from "../api/client";
 
 const AuthContext = createContext(); //A global box where auth data will live
 
@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   */
   const fetchMe = async () => {
     try {
-      const res = await api.get("/auth/me");
+      const res = await api.get("api/auth/me");
       setUser(res.data);
     } catch {
       setUser(null);
@@ -33,12 +33,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (payload) => {
-    await api.post("/auth/public/login", payload);
+    await api.post("api/auth/public/login", payload);
     await fetchMe();
   };
 
   const logout = async () => {
-    await api.post("/auth/logout");
+    await api.post("api/auth/logout");
     setUser(null);
   };
 
