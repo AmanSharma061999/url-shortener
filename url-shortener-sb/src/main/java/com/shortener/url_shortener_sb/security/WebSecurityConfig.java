@@ -47,6 +47,8 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(@Value("${frontend.url}") String frontendUrl) {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
+
+        config.setAllowedOrigins(List.of(frontendUrl));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("X-Trace-Id"));
@@ -75,7 +77,7 @@ public class WebSecurityConfig {
     }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource(null)))
+        http.cors(cors -> {})
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
