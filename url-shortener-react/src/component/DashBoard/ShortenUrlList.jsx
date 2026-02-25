@@ -24,7 +24,7 @@ const ShortenUrlList = ({ startDate, endDate }) => {
   const fetchMyUrls = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/urls/myurls", {
+      const res = await api.get("/api/urls/myurls", {
         withCredentials: true,
       });
       setData(res.data || []);
@@ -44,7 +44,7 @@ const ShortenUrlList = ({ startDate, endDate }) => {
 
       // Calls analytics endpoint for one short URL
       const res = await api.get(
-        `/urls/analytics/${shortCode}?startDate=${startDateTime}&endDate=${endDateTime}`,
+        `/api/urls/analytics/${shortCode}?startDate=${startDateTime}&endDate=${endDateTime}`,
         { withCredentials: true },
       );
       setAnalyticsData(res.data || []);
