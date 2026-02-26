@@ -33,12 +33,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (payload) => {
-    await api.post("api/auth/public/login", payload);
+    await api.post("/auth/public/login", payload);
     await fetchMe();
   };
 
   const logout = async () => {
-    await api.post("api/auth/logout");
+    await api.post("/auth/logout");
     setUser(null);
   };
 
