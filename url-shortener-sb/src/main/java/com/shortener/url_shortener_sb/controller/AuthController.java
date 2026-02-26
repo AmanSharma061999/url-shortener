@@ -58,7 +58,7 @@ public class AuthController {
 
         ResponseCookie cookie = ResponseCookie.from("access_token", jwt)
                 .httpOnly(true)
-                .secure(true)                    // prod true
+                .secure(cookieSecure)                    // prod true
                 .sameSite("None")                // required
                 .domain(".linxlytics.com")       // required for subdomains
                 .path("/")
@@ -91,6 +91,8 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("access_token", "")
                 .httpOnly(true)
                 .secure(cookieSecure)
+                .sameSite("None")
+                .domain(".linxlytics.com")
                 .path("/")// true only in HTTP
                 .maxAge(0)// delete cookie
                 .build();
