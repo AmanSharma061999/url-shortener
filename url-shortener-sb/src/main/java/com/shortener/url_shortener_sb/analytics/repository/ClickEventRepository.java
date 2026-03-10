@@ -1,4 +1,4 @@
-package com.shortener.url_shortener_sb.repository;
+package com.shortener.url_shortener_sb.analytics.repository;
 
 import com.shortener.url_shortener_sb.analytics.model.ClickEvent;
 import com.shortener.url_shortener_sb.url.model.UrlMapping;

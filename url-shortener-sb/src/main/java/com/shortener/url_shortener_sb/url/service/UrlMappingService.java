@@ -6,7 +6,7 @@ import com.shortener.url_shortener_sb.analytics.model.ClickEvent;
 import com.shortener.url_shortener_sb.url.model.UrlMapping;
 import com.shortener.url_shortener_sb.auth.model.User;
 
-import com.shortener.url_shortener_sb.repository.ClickEventRepository;
+import com.shortener.url_shortener_sb.analytics.repository.ClickEventRepository;
 import com.shortener.url_shortener_sb.url.repository.UrlMappingRepository;
 import com.shortener.url_shortener_sb.auth.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
