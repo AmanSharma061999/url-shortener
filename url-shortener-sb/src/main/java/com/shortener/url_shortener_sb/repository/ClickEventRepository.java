@@ -1,7 +1,7 @@
 package com.shortener.url_shortener_sb.repository;
 
-import com.shortener.url_shortener_sb.models.ClickEvent;
-import com.shortener.url_shortener_sb.models.UrlMapping;
+import com.shortener.url_shortener_sb.analytics.model.ClickEvent;
+import com.shortener.url_shortener_sb.url.model.UrlMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

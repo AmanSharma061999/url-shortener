@@ -20,8 +20,8 @@ const ShortenItem = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  const shortLink = `${window.location.origin}/s/${shortUrl}`;
- 
+  const shortLink = `${import.meta.env.VITE_REDIRECT_BASE_URL}/s/${shortUrl}`;
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(shortLink);
@@ -50,6 +50,7 @@ const ShortenItem = ({
           {/* Short URL */}
           <div className="flex items-center gap-2">
             <span className="text-xs text-white/60">Short URL</span>
+
             <a
               href={shortLink}
               target="_blank"
