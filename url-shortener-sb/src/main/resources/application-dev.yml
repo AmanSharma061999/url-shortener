@@ -28,7 +28,7 @@ frontend:
   url: ${FRONTEND_URL:http://localhost:5173}
 
 jwt:
-  secret: ${JWT_SECRET:dev-only-change}
+  secret: ${JWT_SECRET:6dbe489bffa6017efc738299d819674560bf5c84f6b5fb667c4842a732e1baf2d77c524d6fbd02f23b19550262bdd6949c3d3fb49a2dd414b4f17b1d8aaab5d4}
   expiration: ${JWT_EXPIRATION:172800000}
 
 management:
