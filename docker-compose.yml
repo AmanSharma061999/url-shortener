@@ -3,6 +3,8 @@ name: url_shortener
 services:
   postgres:
     image: postgres:16
+    ports:
+      - "5439:5432"
     container_name: urlshortener-db
     env_file: [ .env ]
     environment:
