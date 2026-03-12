@@ -1,19 +1,19 @@
 package com.shortener.url_shortener_sb.auth.controller;
 
-import com.shortener.url_shortener_sb.auth.dto.LoginRequest;
-import com.shortener.url_shortener_sb.auth.dto.RegisterRequest;
 import com.shortener.url_shortener_sb.auth.dto.ApiResponse;
+import com.shortener.url_shortener_sb.auth.dto.LoginRequest;
 import com.shortener.url_shortener_sb.auth.dto.MeResponse;
+import com.shortener.url_shortener_sb.auth.dto.RegisterRequest;
 import com.shortener.url_shortener_sb.auth.security.UserDetailsImpl;
 import com.shortener.url_shortener_sb.auth.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 
@@ -21,32 +21,45 @@ import java.time.Duration;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserService userService;
     private final boolean cookieSecure;
+    private final UserService userService;
+    private final String cookieDomain;
+    private final String cookieSameSite;
 
-    public AuthController(UserService userService, @Value("${app.cookie.secure:false}") boolean cookieSecure) {
-        this.userService=userService;
-        this.cookieSecure=cookieSecure;
+    public AuthController(
+            UserService userService,
+            @Value("${app.cookie.secure:false}") boolean cookieSecure,
+            @Value("${app.cookie.domain:}") String cookieDomain,
+            @Value("${app.cookie.same-site:Lax}") String cookieSameSite
+    ) {
+        this.userService = userService;
+        this.cookieSecure = cookieSecure;
+        this.cookieDomain = cookieDomain;
+        this.cookieSameSite = cookieSameSite;
     }
 
     @GetMapping("/me")
     public ResponseEntity<MeResponse> me(Authentication authentication) {
-        if(authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(401).body(new MeResponse(false,null,null));
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body(new MeResponse(false, null, null));
         }
 
         Object principal = authentication.getPrincipal();
         if (!(principal instanceof UserDetailsImpl userDetails)) {
-            return ResponseEntity.status(401).body(new MeResponse(false,null,null));
+            return ResponseEntity.status(401).body(new MeResponse(false, null, null));
         }
 
-        var roles= userDetails.getAuthorities()
+        var roles = userDetails.getAuthorities()
                 .stream()
                 .map(a -> a.getAuthority())
                 .toList();
 
-        return ResponseEntity.ok(
-                new MeResponse(true, userDetails.getUsername(), roles));
+        return ResponseEntity.ok(new MeResponse(true, userDetails.getUsername(), roles));
+    }
+
+    @GetMapping("/internal/userid")
+    public Long getUserId(@RequestParam String username) {
+        return userService.findByUsername(username).getId();
     }
 
     @PostMapping("/public/login")
@@ -54,60 +67,47 @@ public class AuthController {
         var authResponse = userService.authenticateUser(loginRequest);
         String jwt = authResponse.getToken();
 
-        ResponseCookie cookie = ResponseCookie.from("access_token", jwt)
+        ResponseCookie.ResponseCookieBuilder cookieBuilder = ResponseCookie.from("token", jwt)
                 .httpOnly(true)
-                .secure(cookieSecure)                    // prod true
-                .sameSite("None")                // required
-                .domain(".linxlytics.com")       // required for subdomains
+                .secure(cookieSecure)
+                .sameSite(cookieSameSite)
                 .path("/")
-                .maxAge(Duration.ofDays(2))
-                .build();
+                .maxAge(Duration.ofDays(2));
+
+        if (cookieDomain != null && !cookieDomain.isBlank()) {
+            cookieBuilder.domain(cookieDomain);
+        }
+
+        ResponseCookie cookie = cookieBuilder.build();
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(new ApiResponse(true));
     }
 
-    /*
-    * ResponseCookie.from("access_token", jwt) --> Creates cookie with the name access_token and value JWT
-    * .httpOnly(true) --> JS cannot read it (document.cookie won’t show it) → prevents token theft via XSS
-    * .secure(false) cause we are using localhost in production we state it true.
-    * .sameSite("Lax") helps reduce CSRF risk (cookie not sent on most cross-site requests).
-    * .path("/") Cookie is sent to all endpoints(/api/... etc)
-    */
-
     @PostMapping("/public/register")
     public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
-
         userService.registerUser(registerRequest);
         return ResponseEntity.ok(new ApiResponse(true));
     }
 
-    // Logout now CLEARS COOKIE
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse> logout(HttpServletResponse response) {
-        ResponseCookie cookie = ResponseCookie.from("access_token", "")
+        ResponseCookie.ResponseCookieBuilder cookieBuilder = ResponseCookie.from("token", "")
                 .httpOnly(true)
                 .secure(cookieSecure)
-                .sameSite("None")
-                .domain(".linxlytics.com")
-                .path("/")// true only in HTTP
-                .maxAge(0)// delete cookie
-                .build();
-        // cookie.setAttribute("SameSite", "Lax"); // if you have Spring Boot support; otherwise do header (shown below)
+                .sameSite(cookieSameSite)
+                .path("/")
+                .maxAge(0);
+
+        if (cookieDomain != null && !cookieDomain.isBlank()) {
+            cookieBuilder.domain(cookieDomain);
+        }
+
+        ResponseCookie cookie = cookieBuilder.build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         return ResponseEntity.ok(new ApiResponse(true));
     }
 }
-
-
-
-
-/*
-
-Spring Boot determines which configuration file to load based on the active profile
-and naming convention (application-{profile}.yml), automatically merging it with the base configuration
-without any code-level references.
- */

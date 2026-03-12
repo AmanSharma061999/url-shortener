@@ -1,10 +1,4 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/url_shortener
-    username: postgres
-    password: 6521
-    driver-class-name: org.postgresql.Driver
-
   application:
     name: auth-service
 
@@ -21,7 +15,6 @@ spring:
 server:
   port: ${PORT:8081}
 
-
 management:
   endpoint:
     health:
@@ -32,3 +25,13 @@ management:
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [traceId=%X{traceId:-}] %logger{36} - %msg%n"
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:172800000}
+
+app:
+  cookie:
+    secure: ${APP_COOKIE_SECURE:false}
+    domain: ${APP_COOKIE_DOMAIN:}
+    same-site: ${APP_COOKIE_SAMESITE:Lax}

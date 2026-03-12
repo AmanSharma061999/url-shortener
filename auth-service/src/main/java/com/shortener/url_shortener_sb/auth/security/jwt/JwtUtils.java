@@ -31,7 +31,7 @@ public class JwtUtils {
         if(request.getCookies() ==  null) return null;
 
         return Arrays.stream(request.getCookies())
-                .filter(c -> "access_token".equals(c.getName()))
+                .filter(c -> "token".equals(c.getName()))
                 .map(Cookie::getValue)
                 .findFirst()
                 .orElse(null);
@@ -43,7 +43,7 @@ public class JwtUtils {
 
         if(request.getCookies() != null) {
             for(Cookie cookie: request.getCookies()) {
-                if("access_token".equals(cookie.getName())) {
+                if("access".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
@@ -64,6 +64,7 @@ public class JwtUtils {
 
         return Jwts.builder()
                 .subject(username)
+                .claim("userId", userDetails.getId())
                 .claim("roles",roles)
                 .issuedAt(new Date())
                 .expiration(new Date((new Date().getTime() + jwtExpirationMs)))

@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.shortener</groupId>
-	<artifactId>url-shortener-sb</artifactId>
+	<artifactId>auth-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>url-shortener-sb</name>
-	<description>Url Shortener and redirection</description>
+	<name>auth-service</name>
+	<description>Authentication</description>
 	<url/>
 	<licenses>
 		<license/>
