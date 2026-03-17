@@ -23,7 +23,7 @@ spring:
           predicates:
             - Path=/api/analytics/**
 
-      globalcors:
+      global cors:
         add-to-simple-url-handler-mapping: true
         cors-configurations:
           '[/**]':
