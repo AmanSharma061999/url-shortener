@@ -10,11 +10,19 @@ import java.util.List;
 @Repository
 public interface ClickEventRepository extends JpaRepository<ClickEvent, Long> {
 
-    List<ClickEvent> findByLinkIdAndClickDateBetween(Long linkId, LocalDateTime startDate, LocalDateTime endDate);
-
-    List<ClickEvent> findByShortUrlAndClickDateBetween(String shortUrl, LocalDateTime startDate, LocalDateTime endDate);
-
     long countByLinkId(Long linkId);
 
     long countByShortUrl(String shortUrl);
+
+    List<ClickEvent> findByLinkIdAndClickDateBetweenOrderByClickDateDesc(
+            Long linkId,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
+
+    List<ClickEvent> findByShortUrlAndClickDateBetweenOrderByClickDateDesc(
+            String shortUrl,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
 }

@@ -6,11 +6,14 @@ import com.shortener.url_shortener_sb.url.dto.UrlMappingDTO;
 import com.shortener.url_shortener_sb.url.service.UrlMappingService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/urls")
@@ -35,5 +38,19 @@ public class UrlMappingController {
         CustomUserPrincipal principal = (CustomUserPrincipal) authentication.getPrincipal();
         String username = principal.getUsername();
         return ResponseEntity.ok(urlMappingService.getUrlsByUsername(username));
+    }
+
+    @GetMapping("/totalClicks")
+    public ResponseEntity<Map<LocalDate, Long>> getTotalClicksByDate(
+            Authentication authentication,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        CustomUserPrincipal principal = (CustomUserPrincipal) authentication.getPrincipal();
+        String username = principal.getUsername();
+
+        Map<LocalDate, Long> totalClicks = urlMappingService.getTotalClicksByUsernameAndDate(username, startDate, endDate);
+
+        return ResponseEntity.ok(totalClicks);
     }
 }

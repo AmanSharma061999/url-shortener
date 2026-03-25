@@ -43,7 +43,7 @@ public class JwtUtils {
 
         if(request.getCookies() != null) {
             for(Cookie cookie: request.getCookies()) {
-                if("access".equals(cookie.getName())) {
+                if("token".equals(cookie.getName())) {
                     return cookie.getValue();
                 }
             }
@@ -89,12 +89,8 @@ public class JwtUtils {
             Jwts.parser().verifyWith((SecretKey) key())
                     .build().parseSignedClaims(authToken);
             return true;
-        } catch (JwtException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return false;
         }
     }
 }

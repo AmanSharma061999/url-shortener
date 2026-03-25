@@ -52,4 +52,15 @@ public class AnalyticsController {
 
         return ResponseEntity.ok(clickEventService.getClicksByShortUrl(shortUrl, startDate, endDate));
     }
+
+    @GetMapping("/timeseries/shortUrl/{shortUrl}")
+    public ResponseEntity<Map<LocalDate, Long>> getTimeSeriesByShortUrl(
+            @PathVariable String shortUrl,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        return ResponseEntity.ok(
+                clickEventService.getClickCountTimeSeriesByShortUrl(shortUrl, startDate, endDate)
+        );
+    }
 }

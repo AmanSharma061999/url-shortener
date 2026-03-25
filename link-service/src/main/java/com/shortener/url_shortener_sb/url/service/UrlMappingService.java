@@ -5,13 +5,21 @@ import com.shortener.url_shortener_sb.url.model.UrlMapping;
 import com.shortener.url_shortener_sb.url.repository.UrlMappingRepository;
 import com.shortener.url_shortener_sb.url.dto.RecordClickEventRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import org.springframework.stereotype.Service;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 
 @Service
 public class UrlMappingService {
@@ -91,9 +99,11 @@ public class UrlMappingService {
         UrlMapping urlMapping = urlMappingRepository.findByShortUrl(shortUrl);
 
         if(urlMapping != null) {
-            urlMapping.setClickCount(urlMapping.getClickCount()+1);
-            urlMappingRepository.save(urlMapping);
+            return null;
         }
+
+        urlMapping.setClickCount(urlMapping.getClickCount()+1);
+        urlMappingRepository.save(urlMapping);
 
         try {
             RecordClickEventRequest request = new RecordClickEventRequest(
@@ -123,5 +133,44 @@ public class UrlMappingService {
         dto.setUserId(urlMapping.getUserId());
 
         return dto;
+    }
+
+    public Map<LocalDate, Long> getTotalClicksByUsernameAndDate(String username, LocalDate startDate, LocalDate endDate) {
+        List<UrlMappingDTO> userUrls = getUrlsByUsername(username);
+        Map<LocalDate, Long> aggregated = new TreeMap<>();
+
+        for(UrlMappingDTO url: userUrls) {
+            String encodedShortUrl = URLEncoder.encode(url.getShortUrl(), StandardCharsets.UTF_8);
+            String urlString = analyticsServiceUrl
+                    + "/api/analytics/timeseries/shortUrl/" + encodedShortUrl
+                    + "?startDate=" + startDate
+                    + "&endDate=" + endDate;
+
+            try {
+                ResponseEntity<Map<LocalDate, Long>> response = restTemplate.exchange(
+                        urlString,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<Map<LocalDate, Long>>() {}
+                );
+
+                Map<LocalDate, Long> perUrlMap = response.getBody();
+                if (perUrlMap == null) {
+                    continue;
+                }
+
+                for (Map.Entry<LocalDate, Long> entry : perUrlMap.entrySet()) {
+                    aggregated.merge(entry.getKey(), entry.getValue(), Long::sum);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        LocalDate cursor = startDate;
+        while (!cursor.isAfter(endDate)) {
+            aggregated.putIfAbsent(cursor, 0L);
+            cursor = cursor.plusDays(1);
+        }
+
+        return aggregated;
     }
 }
