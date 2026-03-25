@@ -98,7 +98,7 @@ public class UrlMappingService {
     public UrlMapping getOriginalUrl(String shortUrl) {
         UrlMapping urlMapping = urlMappingRepository.findByShortUrl(shortUrl);
 
-        if(urlMapping != null) {
+        if(urlMapping == null) {
             return null;
         }
 
