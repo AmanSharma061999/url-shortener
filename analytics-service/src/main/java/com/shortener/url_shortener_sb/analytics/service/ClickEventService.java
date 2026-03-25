@@ -6,7 +6,12 @@ import com.shortener.url_shortener_sb.analytics.model.ClickEvent;
 import com.shortener.url_shortener_sb.analytics.repository.ClickEventRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
