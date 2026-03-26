@@ -1,9 +1,12 @@
 package com.shortener.url_shortener_sb.url.service;
 
+import com.shortener.url_shortener_sb.url.dto.ClickEventDTO;
 import com.shortener.url_shortener_sb.url.dto.UrlMappingDTO;
 import com.shortener.url_shortener_sb.url.model.UrlMapping;
 import com.shortener.url_shortener_sb.url.repository.UrlMappingRepository;
 import com.shortener.url_shortener_sb.url.dto.RecordClickEventRequest;
+import org.apache.coyote.Response;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -12,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -172,5 +176,34 @@ public class UrlMappingService {
         }
 
         return aggregated;
+    }
+
+    public List<ClickEventDTO> getClickEventsByDate(String username, String shortUrl, LocalDateTime startDate, LocalDateTime endDate) {
+        Long userId = getUserIdFromAuthService(username);
+
+        UrlMapping urlMapping = urlMappingRepository.findByShortUrl(shortUrl);
+        if(urlMapping == null) {
+            throw new IllegalArgumentException("Short Url not Found");
+        }
+        if(!urlMapping.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("You are not allowed to vie analytics for this url");
+        }
+
+        String url = analyticsServiceUrl +
+                "/api/analytics/events/shortUrl/" + shortUrl +
+                "?startDate=" + startDate +
+                "&endDate=" + endDate;
+
+        try {
+            ResponseEntity<List<ClickEventDTO>> response = restTemplate.exchange(
+                    url, HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<ClickEventDTO>>() {}
+            );
+            return response.getBody() != null ? response.getBody() : List.of();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to fetch analytics for short url", e);
+        }
     }
 }

@@ -26,6 +26,7 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/api/analytics/events").permitAll()
                         .requestMatchers("/api/analytics/timeseries/**").permitAll()
+                        .requestMatchers("/api/analytics/events/shortUrl/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(httpBasic -> httpBasic.disable())

@@ -1,6 +1,7 @@
 package com.shortener.url_shortener_sb.url.controller;
 
 import com.shortener.url_shortener_sb.config.jwt.CustomUserPrincipal;
+import com.shortener.url_shortener_sb.url.dto.ClickEventDTO;
 import com.shortener.url_shortener_sb.url.dto.ShortenRequest;
 import com.shortener.url_shortener_sb.url.dto.UrlMappingDTO;
 import com.shortener.url_shortener_sb.url.service.UrlMappingService;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -52,5 +54,16 @@ public class UrlMappingController {
         Map<LocalDate, Long> totalClicks = urlMappingService.getTotalClicksByUsernameAndDate(username, startDate, endDate);
 
         return ResponseEntity.ok(totalClicks);
+    }
+
+    @GetMapping("/analytics/{shortUrl}")
+    public ResponseEntity<List<ClickEventDTO>> getUrlAnalytics(@PathVariable String shortUrl,
+                                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime startDate,
+                                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime endDate,
+                                                               Authentication authentication) {
+        CustomUserPrincipal principal = (CustomUserPrincipal) authentication.getPrincipal();
+        String username = principal.getUsername();
+
+        return ResponseEntity.ok(urlMappingService.getClickEventsByDate(username, shortUrl, startDate, endDate));
     }
 }
